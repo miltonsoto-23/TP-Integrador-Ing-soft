@@ -1,0 +1,44 @@
+[tool.commitizen]
+name = "cz_customize"
+version = "1.0.0"
+tag_format = "v$version"
+
+[tool.commitizen.customize]
+schema_pattern = "^(feat|fix|docs|refactor|test|chore)(\\([a-z]+\\))?: [A-Z]+-[0-9]+ [a-z].{1,50}$"
+message_template = "{{change_type}}({{scope}}): {{jira_key}} {{message}}"
+
+[[tool.commitizen.customize.questions]]
+type = "list"
+name = "change_type"
+message = "Tipo de cambio:"
+choices = [
+    {value = "feat",     name = "feat:     nueva funcionalidad"},
+    {value = "fix",      name = "fix:      correcion de bug"},
+    {value = "docs",     name = "docs:     documentacion"},
+    {value = "refactor", name = "refactor: reestructura sin cambio funcional"},
+    {value = "test",     name = "test:     agregar o corregir tests"},
+    {value = "chore",    name = "chore:    mantenimiento o dependencias"}
+]
+
+[[tool.commitizen.customize.questions]]
+type = "list"
+name = "scope"
+message = "Alcance del cambio:"
+choices = [
+    {value = "edge",      name = "edge:     firmware ESP32"},
+    {value = "backend",   name = "backend:  logica del servidor"},
+    {value = "frontend",  name = "frontend: interfaz de usuario"},
+    {value = "db",        name = "db:       base de datos"},
+    {value = "docs",      name = "docs:     documentacion"},
+    {value = "ci",        name = "ci:       integracion continua"}
+]
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "jira_key"
+message = "Clave Jira (ej. SDR-11):"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "message"
+message = "Descripcion corta (imperativo, minusculas, sin punto final, maximo 50 caracteres):"

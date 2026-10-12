@@ -1,0 +1,92 @@
+# .pre-commit-config.yaml
+repos:
+  # Checks generales
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+        exclude: \.(java)$
+      - id: check-yaml
+      - id: check-json
+
+  # Backend linter opcion C - (java & Spring Boot)
+  - repo: local
+    hooks:
+      - id: checkstyle
+        name: Checkstyle backend java
+        entry: bash -c 'backend/spring/final-project/gradlew -p backend/spring/final-project checkstyleMain'
+        language: system
+        files: ^backend/spring/
+        pass_filenames: false
+
+      # Formatter
+      - id: spotless
+        name: Spotless Java formatter
+        entry: bash -c 'backend/spring/final-project/gradlew -p backend/spring/final-project spotlessCheck'
+        language: system
+        files: ^backend/spring/
+        pass_filenames: false
+      # Bug finder
+      - id: spotbugs
+        name: SpotBugs Java
+        entry: bash -c 'backend/spring/final-project/gradlew -p backend/spring/final-project spotbugsMain'
+        language: system
+        files: ^backend/spring/
+        pass_filenames: false
+
+  # Frontend linter (TypeScript/React)
+  - repo: local # Archivo de configuracion ubicado en el repo
+    hooks:
+      - id: eslint-frontend
+        name: ESLint frontend
+        entry: bash -c 'cd frontend/dashboard && npx eslint src/'
+        language: system
+        files: ^frontend/
+        types: [file]
+  # Formatter para TypeScript/react
+      - id: prettier-frontend
+        name: Prettier frontend
+        entry: bash -c 'cd frontend/dashboard && npx prettier --write src/'
+        language: system
+        files: ^frontend/
+
+  # Firmware linter (C++)
+  - repo: local
+    hooks:
+      - id: clang-format
+        name: clang-format firmware
+        entry: bash -c 'find firmware/esp32/src -name "*.cpp" -o -name "*.h" | xargs clang-format --dry-run --Werror'
+        language: system
+        files: ^firmware/
+
+  # Validación del mensaje de commit
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.0.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+
+  # pre-push testing unitarios
+  - repo: local
+    hooks:
+      - id: spring-compile
+        name: Spring Boot compile check
+        entry: bash -c 'backend/spring/final-project/gradlew -p backend/spring/final-project compileJava'
+        language: system
+        stages: [pre-push]
+        pass_filenames: false
+
+#      - id: frontend-compile
+ #       name: Frontend TypeScript compile check
+  #      entry: bash -c 'cd frontend/dashboard && npx tsc --noEmit'
+  #      language: system
+   #     stages: [pre-push]
+    #    pass_filenames: false
+
+      #- id: firmware-compile
+      #  name: Firmware compile check
+      #  entry: bash -c 'cd firmware/esp32 && pio run'
+      #  language: system
+      #  stages: [pre-push]
+      #  pass_filenames: false
